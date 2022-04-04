@@ -1,27 +1,41 @@
 {
-  "name": "evaluationsite-admin",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
-  },
-  "dependencies": {
-    "core-js": "^3.8.3",
-    "vue": "^2.6.14",
-    "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "vue-template-compiler": "^2.6.14"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "name": "evaluationsite-admin",
+    "version": "1.0.0",
+    "description": "基于vue + elementUI的管理系统模板",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build"
+    },
+    "dependencies": {
+        "axios": "^0.26.1",
+        "core-js": "^3.21.1",
+        "echarts": "^5.3.2",
+        "element-ui": "^2.15.6",
+        "js-cookie": "^3.0.1",
+        "less": "^4.1.2",
+        "less-loader": "^10.2.0",
+        "oidc-client": "^1.11.5",
+        "path-browserify": "^1.0.1",
+        "screenfull": "^6.0.1",
+        "vue": "^2.6.14",
+        "vue-count-to": "^1.0.13",
+        "vue-router": "^3.5.1",
+        "vuex": "^3.6.2"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.23",
+        "@vue/cli-plugin-babel": "~5.0.0",
+        "@vue/cli-plugin-router": "~5.0.0",
+        "@vue/cli-plugin-vuex": "~5.0.0",
+        "@vue/cli-service": "~5.0.0",
+        "babel-plugin-component": "^1.1.1",
+        "vue-template-compiler": "^2.6.14",
+        "webpack": "^5.71.0"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ]
 }
