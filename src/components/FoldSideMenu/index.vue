@@ -35,12 +35,12 @@ export default {
     height: 22px;
     font-size: 100px;
     vertical-align: middle;
-    transition: transform 0.2s ease;
+    transition: transform .2s ease;
   }
   &.vertical {
     .icon {
       transform: rotateZ(90deg);
-      transition: transform 0.2s ease;
+      transition: transform .2s ease;
     }
   }
 }

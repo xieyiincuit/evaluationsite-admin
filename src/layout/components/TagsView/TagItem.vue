@@ -6,6 +6,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'TagItem',
   props: {
@@ -26,14 +27,14 @@ export default {
 .tag-item-wrapper {
   display: inline-block;
   vertical-align: middle;
-  height: 32px !important;
-  margin: 4px 2px !important;
-  padding: 0 10px !important;
-  border-radius: 3px !important;
-  line-height: 32px !important;
-  border: 1px solid #e8eaec !important;
-  color: #555 !important;
-  background: #fff !important;
+  height: 32px!important;
+  margin: 4px 2px!important;
+  padding: 0 10px!important;
+  border-radius: 3px!important;
+  line-height: 32px!important;
+  border: 1px solid #e8eaec!important;
+  color: #555!important;
+  background: #fff!important;
   overflow: hidden;
   cursor: pointer;
   .tag-item-dot {

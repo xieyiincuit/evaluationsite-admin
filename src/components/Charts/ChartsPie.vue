@@ -37,7 +37,7 @@ export default {
       this.dom.resize()
     },
     drawing() {
-      const legendData = this.data.map((item) => item.name)
+      const legendData = this.data.map(item => item.name)
       const radius = this.type === 'pie' ? '70%' : ['50%', '70%']
       const options = {
         // 标题

@@ -99,5 +99,5 @@ export default {
 </script>
 
 <style lang="less">
-@import '../assets/less/home';
+@import "../assets/less/home";
 </style>
