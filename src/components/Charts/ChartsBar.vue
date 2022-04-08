@@ -72,7 +72,7 @@ export default {
         yAxis: [
           {
             type: 'value',
-            max: (value) => {
+            max: value => {
               return Math.ceil(value.max / 100) * 100 + 300
             }
           }

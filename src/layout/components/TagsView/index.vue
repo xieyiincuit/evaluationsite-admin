@@ -68,7 +68,7 @@ export default {
     },
     filterFixedTags(routes, basePath = '/') {
       let tags = []
-      routes.forEach((item) => {
+      routes.forEach(item => {
         if (item.meta && item.meta.fixed) {
           const tagPath = path.resolve(basePath, item.path)
           tags.push({
@@ -109,7 +109,7 @@ export default {
       if (type === 'mousewheel' || type === 'DOMMouseScroll') {
         // mousewheel 事件中的 event.wheelDelta 属性值：若滚轮是向上滚动，返回值为正，反之为负；且返回的值，均为 120 的倍数，即：幅度大小 = 返回的值 / 120
         // DOMMouseScroll 事件中的 event.detail 属性值：返回的值，与 event.wheelDelta 正好相反，即滚轮是向上滚动，返回值为负，反之为正；返回的值，均为 3 的倍数，即：幅度大小 = 返回的值 / 3
-        distance = e.wheelDelta ? e.wheelDelta : -(e.detail || 0) * 40
+        distance = (e.wheelDelta) ? e.wheelDelta : -(e.detail || 0) * 40
       }
       this.handleMove(distance)
     },
@@ -133,7 +133,7 @@ export default {
     getTagElement(route) {
       this.$nextTick(() => {
         const tagsItemArr = this.$refs.tagsItem
-        const index = tagsItemArr.findIndex((item) => {
+        const index = tagsItemArr.findIndex(item => {
           return item.to.path === route.fullPath
         })
         const tag = tagsItemArr[index].$el
@@ -148,10 +148,7 @@ export default {
       } else if (tag.offsetLeft < -this.tagsContLeft) {
         // 标签在可视区域左侧
         this.tagsContLeft = -tag.offsetLeft + this.contPadding
-      } else if (
-        tag.offsetLeft > -this.tagsContLeft &&
-        tag.offsetLeft + tag.offsetWidth < -this.tagsContLeft + viewWidth
-      ) {
+      } else if (tag.offsetLeft > -this.tagsContLeft && tag.offsetLeft + tag.offsetWidth < -this.tagsContLeft + viewWidth) {
         // 标签在可视区域
         this.tagsContLeft = Math.min(0, viewWidth - tag.offsetWidth - tag.offsetLeft - this.contPadding)
       } else {
@@ -223,7 +220,7 @@ export default {
       padding: 0 4px;
       overflow: visible;
       white-space: nowrap;
-      transition: left 0.5s ease;
+      transition: left .5s ease;
     }
   }
 }

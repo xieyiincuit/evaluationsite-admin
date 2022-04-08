@@ -12,7 +12,12 @@
       <template slot="title">
         <Item :icon="item.meta && item.meta.icon" :title="item.meta && item.meta.title" />
       </template>
-      <SideMenuItem v-for="child in item.children" :key="child.path" :item="child" :base-path="resolvePath(child.path)" />
+      <SideMenuItem
+        v-for="child in item.children"
+        :key="child.path"
+        :item="child"
+        :base-path="resolvePath(child.path)"
+      />
     </el-submenu>
   </div>
 </template>
@@ -67,4 +72,5 @@ export default {
 </script>
 
 <style lang="less">
+
 </style>
