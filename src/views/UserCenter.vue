@@ -1,37 +1,25 @@
 <template>
   <div class="user-center-wrapper clear-fix">
-    <el-card shadow="always" :body-style="{padding: '50px'}">
+    <el-card shadow="always" :body-style="{ padding: '50px' }">
       <div class="user-avatar">
-        <img src="../assets/img/avatar.png" alt="avatar">
+        <img :src="user.avatar" alt="avatar">
       </div>
       <ul class="user-info">
         <li>
-          <label>用户名：</label>
-          <span>{{ userInfo.username }}</span>
-        </li>
-        <li>
           <label>角色：</label>
-          <span>{{ userInfo.roles }}</span>
+          <span>{{ user.role }}</span>
         </li>
         <li>
           <label>昵称：</label>
-          <span>{{ userInfo.nickname }}</span>
+          <span>{{ user.nickname }}</span>
         </li>
         <li>
           <label>电话号码：</label>
-          <span>{{ userInfo.phone }}</span>
+          <span>{{ user.phone_number }}</span>
         </li>
         <li>
           <label>邮箱：</label>
-          <span>{{ userInfo.email }}</span>
-        </li>
-        <li>
-          <label>创建时间：</label>
-          <span>{{ userInfo.createtime }}</span>
-        </li>
-        <li>
-          <label>更新时间：</label>
-          <span>{{ userInfo.updatetime }}</span>
+          <span>{{ user.email }}</span>
         </li>
       </ul>
     </el-card>
@@ -39,19 +27,19 @@
 </template>
 
 <script>
-import { getUserInfo } from '@/api/login'
-
 export default {
   name: 'UserCenter',
   data() {
     return {
-      userInfo: {}
+      user: {
+        avatar:
+          'http://localhost:9000/' + window.localStorage.getItem('USER_AVATAR'),
+        role: window.localStorage.getItem('USER_ROLE'),
+        nickname: window.localStorage.getItem('USER_NAME'),
+        phone_number: window.localStorage.getItem('USER_PHONE'),
+        email: window.localStorage.getItem('USER_EMAIL')
+      }
     }
-  },
-  created() {
-    getUserInfo().then(res => {
-      this.userInfo = res
-    })
   }
 }
 </script>

@@ -11,8 +11,10 @@
           <div class="bullshit">
             <div class="bullshit-oops">抱歉!</div>
             <div class="bullshit-headline">您没有操作权限...</div>
-            <div class="bullshit-info">当前帐号没有操作权限,请更换账号重新操作！</div>
-            <a class="bullshit-return-home" href="#/home">返回首页</a>
+            <div class="bullshit-info">
+              当前帐号没有操作权限,请更换账号重新操作！
+            </div>
+            <a class="bullshit-return-home" @click="logout()">重新登录</a>
           </div>
         </el-col>
       </el-row>
@@ -21,8 +23,22 @@
 </template>
 
 <script>
+import applicationUserManager from '@/utils/applicationusermanager'
+import { removeToken } from '@/utils/cookie'
+
 export default {
-  name: 'Page401'
+  name: 'Page401',
+  methods: {
+    logout() {
+      removeToken()
+      window.localStorage.removeItem('USER_NAME')
+      window.localStorage.removeItem('USER_AVATAR')
+      window.localStorage.removeItem('USER_PHONE')
+      window.localStorage.removeItem('USER_EMAIL')
+      window.localStorage.removeItem('USER_ROLE')
+      applicationUserManager.logout()
+    }
+  }
 }
 </script>
 

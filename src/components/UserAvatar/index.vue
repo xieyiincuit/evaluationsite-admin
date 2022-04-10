@@ -1,7 +1,7 @@
 <template>
   <el-dropdown class="user-avatar-wrapper" @command="handleCommand">
     <div class="avatar-box">
-      <el-avatar size="small" :src="avatarSrc" />
+      <el-avatar size="small" :src="avatar" />
       <i class="el-icon-caret-bottom" />
     </div>
     <el-dropdown-menu slot="dropdown">
@@ -14,12 +14,17 @@
 <script>
 import Avatar from '../../assets/img/avatar.png'
 import { removeToken } from '@/utils/cookie'
+import applicationUserManager from '@/utils/applicationusermanager'
 
 export default {
   name: 'UserAvatar',
-  data() {
-    return {
-      avatarSrc: Avatar
+  computed: {
+    avatar() {
+      const localAvatar = window.localStorage.getItem('USER_AVATAR')
+      if (localAvatar) {
+        return 'http://localhost:9000/' + localAvatar
+      }
+      return Avatar
     }
   },
   methods: {
@@ -38,6 +43,12 @@ export default {
         type: 'warning'
       }).then(() => {
         removeToken()
+        window.localStorage.removeItem('USER_NAME')
+        window.localStorage.removeItem('USER_AVATAR')
+        window.localStorage.removeItem('USER_PHONE')
+        window.localStorage.removeItem('USER_EMAIL')
+        window.localStorage.removeItem('USER_ROLE')
+        applicationUserManager.logout()
         location.reload()
       })
     }

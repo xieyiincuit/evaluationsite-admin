@@ -86,16 +86,16 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'upGameshop',
-        name: 'upGameshop',
+        path: 'upgameshop',
+        name: 'UpGameshop',
         component: () => import('../views/gameshop/UpGameShops'),
         meta: {
           title: '已开售商品'
         }
       },
       {
-        path: 'downGameshop',
-        name: 'downGameshop',
+        path: 'downgameshop',
+        name: 'DownGameshop',
         component: () => import('../views/gameshop/DownGameShops'),
         meta: {
           title: '未开售商品'
@@ -115,7 +115,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'userManagement',
-        name: 'userManagement',
+        name: 'UserManagement',
         component: () => import('../views/user/UserManagement'),
         meta: {
           title: '网站用户信息'
@@ -123,7 +123,7 @@ export const asyncRoutes = [
       },
       {
         path: 'auditMManagement',
-        name: 'auditMManagement',
+        name: 'AuditMManagement',
         component: () => import('../views/user/AuditManagement'),
         meta: {
           title: '处理测评资格申请'
@@ -131,7 +131,7 @@ export const asyncRoutes = [
       },
       {
         path: 'bannedManagement',
-        name: 'bannedManagement',
+        name: 'AannedManagement',
         component: () => import('../views/user/BannedManagement'),
         meta: {
           title: '处理用户封禁请求'
@@ -176,31 +176,9 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/error-page',
-    name: 'ErrorPage',
-    component: Layout,
-    redirect: '/error-page/page-401',
-    meta: {
-      title: '错误页面',
-      icon: 'vue-dsn-icon-bug'
-    },
-    children: [
-      {
-        path: 'page-401',
-        name: 'Page401',
-        component: () => import('../views/error-page/401'),
-        meta: {
-          title: '401页面'
-        }
-      },
-      {
-        path: 'page-404',
-        name: 'Page404',
-        component: () => import('../views/error-page/404'),
-        meta: {
-          title: '404页面'
-        }
-      }
-    ]
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/error-page/404'),
+    hidden: true,
+    meta: { title: '404' }
   }
 ]

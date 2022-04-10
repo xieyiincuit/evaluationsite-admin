@@ -16,25 +16,9 @@ Vue.use(Router)
 
 export const constantRoutes = [
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login'),
-    hidden: true,
-    meta: { title: '登录' }
-  },
-  {
-    path: '401',
-    name: '401',
-    component: () => import('../views/error-page/401'),
-    hidden: true,
-    meta: { title: '401' }
-  },
-  {
-    path: '404',
-    name: '404',
-    component: () => import('../views/error-page/404'),
-    hidden: true,
-    meta: { title: '404' }
+    path: '/callback',
+    name: 'LoginCallBack',
+    component: () => import('../views/LoginCallBack')
   },
   {
     path: '/',
@@ -66,12 +50,18 @@ export const constantRoutes = [
         title: '个人中心'
       }
     }]
+  },
+  {
+    path: '401',
+    name: 'Page401',
+    component: () => import('../views/error-page/401')
   }
 ]
 
 const routes = [...constantRoutes, ...asyncRoutes]
 
 export default new Router({
+  mode: 'history',
   routes
 })
 
