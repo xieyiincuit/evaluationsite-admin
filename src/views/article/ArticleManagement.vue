@@ -1,15 +1,12 @@
 <template>
-  <div class="merchandise-control">
-    <el-card shadow="always">
-
-    </el-card>
+  <div class="article-management">
+    <el-card shadow="always" />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'MerchandiseControl',
+  name: 'ArticleManagement',
   data() {
     return {}
   },
@@ -18,7 +15,6 @@ export default {
 </script>
 
 <style lang="less">
-.merchandise-control {
-
+.article-management {
 }
 </style>

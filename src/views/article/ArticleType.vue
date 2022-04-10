@@ -1,15 +1,12 @@
 <template>
-  <div class="type-play">
-    <el-card shadow="always">
-
-    </el-card>
+  <div class="article-type">
+    <el-card shadow="always" />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'TypePlay',
+  name: 'ArticleType',
   data() {
     return {}
   },
@@ -18,7 +15,4 @@ export default {
 </script>
 
 <style lang="less">
-.type-play {
-
-}
 </style>

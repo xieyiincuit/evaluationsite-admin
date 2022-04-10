@@ -1,13 +1,10 @@
 <template>
   <div class="game-company">
-    <el-card shadow="always">
-
-    </el-card>
+    <el-card shadow="always" />
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'GameCompany',
   data() {
@@ -18,7 +15,4 @@ export default {
 </script>
 
 <style lang="less">
-.game-company {
-
-}
 </style>

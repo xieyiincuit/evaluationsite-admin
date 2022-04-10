@@ -1,15 +1,12 @@
 <template>
-  <div class="type-appraisal">
-    <el-card shadow="always">
-
-    </el-card>
+  <div class="game-type">
+    <el-card shadow="always" />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'TypeAppraisal',
+  name: 'GameType',
   data() {
     return {}
   },
@@ -18,7 +15,4 @@ export default {
 </script>
 
 <style lang="less">
-.type-appraisal {
-
-}
 </style>

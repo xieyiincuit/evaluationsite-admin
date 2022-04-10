@@ -1,15 +1,12 @@
 <template>
-  <div class="appraisal-article">
-    <el-card shadow="always">
-
-    </el-card>
+  <div class="upgame-shops">
+    <el-card shadow="always" />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'AppraisalArticle',
+  name: 'DownGameShops',
   data() {
     return {}
   },
@@ -18,7 +15,4 @@ export default {
 </script>
 
 <style lang="less">
-.appraisal-article {
-
-}
 </style>

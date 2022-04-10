@@ -1,12 +1,12 @@
 <template>
-  <div class="game-management">
+  <div class="downgame-shops">
     <el-card shadow="always" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GameManagement',
+  name: 'DownGameShops',
   data() {
     return {}
   },
