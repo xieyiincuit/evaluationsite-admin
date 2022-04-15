@@ -22,7 +22,7 @@ export default {
     avatar() {
       const localAvatar = window.localStorage.getItem('USER_AVATAR')
       if (localAvatar) {
-        return 'http://localhost:9000/' + localAvatar
+        return 'http://20.70.192.60:9000/' + localAvatar
       }
       return Avatar
     }

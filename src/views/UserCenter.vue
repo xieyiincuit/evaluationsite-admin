@@ -33,7 +33,8 @@ export default {
     return {
       user: {
         avatar:
-          'http://localhost:9000/' + window.localStorage.getItem('USER_AVATAR'),
+          'http://20.70.192.60:9000/' +
+          window.localStorage.getItem('USER_AVATAR'),
         role: window.localStorage.getItem('USER_ROLE'),
         nickname: window.localStorage.getItem('USER_NAME'),
         phone_number: window.localStorage.getItem('USER_PHONE'),

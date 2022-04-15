@@ -52,7 +52,7 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '401',
+    path: '/error-page/401',
     name: 'Page401',
     component: () => import('../views/error-page/401')
   }
