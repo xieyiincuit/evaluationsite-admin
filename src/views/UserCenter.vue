@@ -33,7 +33,7 @@ export default {
     return {
       user: {
         avatar:
-          'http://20.70.192.60:9000/' +
+          'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
           window.localStorage.getItem('USER_AVATAR'),
         role: window.localStorage.getItem('USER_ROLE'),
         nickname: window.localStorage.getItem('USER_NAME'),
