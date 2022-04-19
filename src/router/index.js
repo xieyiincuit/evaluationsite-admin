@@ -37,7 +37,7 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/',
+    path: '/user',
     name: 'Layout',
     component: Layout,
     redirect: '/user-center',

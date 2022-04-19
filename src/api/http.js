@@ -4,7 +4,7 @@ import { getToken, removeToken } from '../utils/cookie'
 import { applicationUserManager } from '../utils/applicationusermanager'
 
 axios.defaults.timeout = 100000
-axios.defaults.baseURL = process.env.VUE_APP_BASE_API
+axios.defaults.baseURL = `http://zhousl.australiaeast.cloudapp.azure.com:20000`
 
 // 自定义判断元素类型JS
 function toType(obj) {
