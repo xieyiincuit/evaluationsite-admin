@@ -22,9 +22,7 @@ export default {
     avatar() {
       const localAvatar = window.localStorage.getItem('USER_AVATAR')
       if (localAvatar) {
-        return (
-          'http://zhousl.australiaeast.cloudapp.azure.com:9000/' + localAvatar
-        )
+        return process.env.VUE_APP_OSS + localAvatar
       }
       return Avatar
     }
@@ -32,7 +30,7 @@ export default {
   methods: {
     handleCommand(command) {
       if (command === 'userCenter') {
-        this.$router.push({ path: '/user-center' })
+        this.$router.push({ name: 'UserCenter' })
       }
       if (command === 'loginOut') {
         this.loginOut()

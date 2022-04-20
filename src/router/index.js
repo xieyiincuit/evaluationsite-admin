@@ -37,8 +37,8 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/user',
-    name: 'Layout',
+    path: '/admin',
+    name: 'AdminInfo',
     component: Layout,
     redirect: '/user-center',
     hidden: true,

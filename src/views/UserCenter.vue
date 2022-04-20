@@ -33,8 +33,7 @@ export default {
     return {
       user: {
         avatar:
-          'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-          window.localStorage.getItem('USER_AVATAR'),
+          process.env.VUE_APP_OSS + window.localStorage.getItem('USER_AVATAR'),
         role: window.localStorage.getItem('USER_ROLE'),
         nickname: window.localStorage.getItem('USER_NAME'),
         phone_number: window.localStorage.getItem('USER_PHONE'),
