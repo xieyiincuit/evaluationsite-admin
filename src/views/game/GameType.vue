@@ -81,7 +81,7 @@
 import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'GameCompany',
+  name: 'GameType',
   components: { Pagination },
   data() {
     return {
