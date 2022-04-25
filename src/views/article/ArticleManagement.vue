@@ -123,6 +123,7 @@ export default {
     fetchTypeList() {
       this.$http.get('v1/e/category/list', null, (res) => {
         this.typeList = res
+        this.typeList.unshift({ categoryType: '全部', categoryId: null })
       })
     },
     // 获取数据列表
