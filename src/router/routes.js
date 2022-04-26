@@ -118,7 +118,7 @@ export const asyncRoutes = [
         name: 'UserManagement',
         component: () => import('../views/user/UserManagement'),
         meta: {
-          title: '网站用户信息'
+          title: '用户信息'
         }
       },
       {
@@ -126,7 +126,15 @@ export const asyncRoutes = [
         name: 'AuditMManagement',
         component: () => import('../views/user/AuditManagement'),
         meta: {
-          title: '处理测评资格申请'
+          title: '测评申请管理'
+        }
+      },
+      {
+        path: 'EvaluatorRedraw',
+        name: 'EvaluatorRedraw',
+        component: () => import('../views/user/EvaluatorRedraw'),
+        meta: {
+          title: '测评资格收回'
         }
       },
       {
@@ -134,7 +142,7 @@ export const asyncRoutes = [
         name: 'AannedManagement',
         component: () => import('../views/user/BannedManagement'),
         meta: {
-          title: '处理用户封禁请求'
+          title: '封禁申请管理'
         }
       }
     ]
