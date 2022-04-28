@@ -65,7 +65,7 @@
         @pagination="fetchData"
       />
       <el-dialog
-        title="拒绝申请"
+        title="撤回资格"
         :visible.sync="redrawDialog.visiable"
         width="30%"
         center
