@@ -4,7 +4,6 @@
       <!-- 操作栏 -->
       <div class="control-btns">
         <el-button type="primary" @click="handleCreate">新建数据</el-button>
-        <el-button type="danger" @click="batchDelete">批量删除</el-button>
       </div>
       <!-- 查询栏 -->
       <el-form
@@ -14,20 +13,48 @@
         label-width="90px"
         class="search-form"
       >
-        <el-form-item label="编号">
-          <el-input v-model="listQuery.id" placeholder="编号" />
-        </el-form-item>
-        <el-form-item label="手机">
-          <el-input v-model="listQuery.phone" placeholder="手机" />
-        </el-form-item>
-        <el-form-item label="婚姻状况">
-          <el-select v-model="listQuery.married" placeholder="婚姻状况">
-            <el-option :value="0" label="单身" />
-            <el-option :value="1" label="未婚" />
-            <el-option :value="2" label="已婚" />
-            <el-option :value="3" label="离异" />
+        <el-form-item label="游戏类别">
+          <el-select
+            clearable
+            v-model="listQuery.categoryId"
+            placeholder="请选择游戏类别"
+          >
+            <el-option
+              v-for="item in AllgameType"
+              :key="item.id"
+              :value="item.id"
+              :label="item.categoryName"
+            />
           </el-select>
         </el-form-item>
+        <el-form-item label="游戏公司">
+          <el-select
+            clearable
+            v-model="listQuery.companyId"
+            placeholder="请选择游戏公司"
+          >
+            <el-option
+              v-for="item in AllCompany"
+              :key="item.id"
+              :value="item.id"
+              :label="item.companyName"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="排序方式">
+          <el-select
+            clearable
+            v-model="listQuery.order"
+            placeholder="请选择排序方式"
+          >
+            <el-option value="hot" label="游戏热度" />
+            <el-option value="time" label="发售时间" />
+            <el-option value="score" label="游戏评分" />
+            <el-option value="Id" label="Id" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
@@ -91,7 +118,7 @@
             <el-button
               size="mini"
               :disabled="scope.row.forbid"
-              @click="handleEdit(scope.$index, scope.row)"
+              @click="handleEdit(scope.row.id)"
               >编辑</el-button
             >
             <el-button
@@ -106,7 +133,7 @@
       <!-- 分页栏 -->
       <Pagination
         :total="total"
-        :page.sync="listQuery.currentPage"
+        :page.sync="listQuery.pageIndex"
         :limit.sync="listQuery.pageSize"
         @pagination="fetchData"
       />
@@ -116,17 +143,18 @@
         :visible.sync="formVisible"
         width="30%"
         class="dialog-form"
-        :before-close="handleClose"
       >
         <el-steps :active="active" finish-status="success" align-center>
           <el-step title="游戏信息"></el-step>
           <el-step title="游戏建议"></el-step>
         </el-steps>
 
+        <!-- 游戏信息表 -->
         <el-form
-          ref="dialogForm"
+          v-if="active == 0"
+          ref="formRules1"
           :model="dialogForm"
-          :rules="formRules"
+          :rules="formRules1"
           label-width="100px"
         >
           <el-form-item label="游戏名：" prop="name">
@@ -136,21 +164,34 @@
             <el-input type="textarea" v-model="dialogForm.description" />
           </el-form-item>
 
-          <el-form-item label="略缩图：">
+          <el-form-item label="略缩图：" prop="roughPicture">
             <el-upload
               class="avatar-uploader"
               action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/g/pic"
               :headers="filereqHeader"
               :show-file-list="false"
-              :on-success="handleAvatarSuccess"
+              :on-success="roughPictureSuccess"
               :before-upload="beforeAvatarUpload"
               :on-error="handleAvatarFail"
               name="file"
             >
               <img
-                :src="'http://zhousl.australiaeast.cloudapp.azure.com:9000/' + dialogForm.avatar"
+                :src="
+                  dialogForm.roughPicture
+                    ? 'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
+                      dialogForm.roughPicture
+                    : pugai
+                "
                 class="avatar"
               />
+              <!-- <img
+              v-if="dialogForm.roughPicture"
+                :src="
+                  'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
+                  dialogForm.roughPicture
+                "
+                class="avatar"
+              /> -->
               <div
                 class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
               >
@@ -173,33 +214,138 @@
             </el-upload>
           </el-form-item>
 
-          <el-form-item label="婚姻状况：" prop="married">
-            <el-select v-model="dialogForm.married">
-              <el-option :value="0" label="单身" />
-              <el-option :value="1" label="未婚" />
-              <el-option :value="2" label="已婚" />
-              <el-option :value="3" label="离异" />
+          <el-form-item label="详细图：" prop="detailsPicture">
+            <el-upload
+              class="avatar-uploader"
+              action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/g/pic"
+              :headers="filereqHeader"
+              :show-file-list="false"
+              :on-success="detailsPictureSuccess"
+              :before-upload="beforeAvatarUpload"
+              :on-error="handleAvatarFail"
+              name="file"
+            >
+              <img
+                :src="
+                  dialogForm.detailsPicture
+                    ? 'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
+                      dialogForm.detailsPicture
+                    : pugai
+                "
+                class="avatar"
+              />
+              <!-- <img
+              v-if="dialogForm.detailsPicture"
+                :src="
+                  'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
+                  dialogForm.detailsPicture
+                "
+                class="avatar"
+              /> -->
+              <div
+                class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
+              >
+                <svg
+                  aria-hidden="true"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  version="1.1"
+                  width="16"
+                  data-view-component="true"
+                  class="octicon octicon-pencil"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"
+                  ></path>
+                </svg>
+                点击上传
+              </div>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="支持平台：" prop="supportPlatform">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="请使用  /  进行分隔"
+              placement="top"
+            >
+              <el-input v-model="dialogForm.supportPlatform" />
+            </el-tooltip>
+          </el-form-item>
+
+          <el-form-item label="游戏类型：" prop="categoryId">
+            <el-select
+              v-model="dialogForm.categoryId"
+              placeholder="请选择游戏类型"
+            >
+              <el-option
+                v-for="item in AllgameType"
+                :key="item.id"
+                :label="item.categoryName"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="爱好：" prop="hobby">
-            <el-checkbox-group v-model="dialogForm.hobby">
-              <el-checkbox label="羽毛球" name="hobby" />
-              <el-checkbox label="乒乓球" name="hobby" />
-              <el-checkbox label="篮球" name="hobby" />
-              <el-checkbox label="排球" name="hobby" />
-              <el-checkbox label="网球" name="hobby" />
-              <el-checkbox label="旱冰" name="hobby" />
-              <el-checkbox label="滑雪" name="hobby" />
-              <el-checkbox label="跳高" name="hobby" />
-              <el-checkbox label="冲浪" name="hobby" />
-            </el-checkbox-group>
+
+          <el-form-item label="公司名称：" prop="companyId">
+            <el-select
+              v-model="dialogForm.companyId"
+              placeholder="请选择游戏类型"
+            >
+              <el-option
+                v-for="item in AllCompany"
+                :key="item.id"
+                :label="item.companyName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
           </el-form-item>
+
           <div class="footer-item">
-            <el-button @click="cancleForm">取 消</el-button>
+            <el-button @click="cancleInformation('formRules1')"
+              >取 消</el-button
+            >
             <el-button
               type="primary"
               :disabled="isSubmit"
-              @click="submitForm('dialogForm')"
+              @click="submitInformation('formRules1')"
+              >下一步</el-button
+            >
+          </div>
+        </el-form>
+
+        <!-- 游戏建议表 -->
+        <el-form
+          v-if="active > 0"
+          ref="formRules2"
+          :model="dialogForm2"
+          :rules="formRules2"
+          label-width="100px"
+        >
+          <el-form-item label="操作系统：" prop="operationSystem">
+            <el-input v-model="dialogForm2.operationSystem" />
+          </el-form-item>
+          <el-form-item label="CPU建议：" prop="cpuName">
+            <el-input v-model="dialogForm2.cpuName" />
+          </el-form-item>
+          <el-form-item label="显卡建议：" prop="graphicsCard">
+            <el-input v-model="dialogForm2.graphicsCard" />
+          </el-form-item>
+          <el-form-item label="内存建议：" prop="memorySize">
+            <el-input v-model="dialogForm2.memorySize" />
+          </el-form-item>
+          <el-form-item label="存储建议：" prop="diskSize">
+            <el-input v-model="dialogForm2.diskSize" />
+          </el-form-item>
+
+          <div class="footer-item">
+            <el-button @click="cancleSuggest('formRules2')">跳 过</el-button>
+            <el-button
+              type="primary"
+              :disabled="isSubmit"
+              @click="submitSuggest('formRules2')"
               >确 定</el-button
             >
           </div>
@@ -213,7 +359,7 @@
 import Pagination from "@/components/Pagination";
 import Upload from "@/components/Upload";
 import dayjs from "dayjs";
-import { getToken } from '../..//utils/cookie'
+import { getToken } from "../..//utils/cookie";
 
 export default {
   name: "GameManagement",
@@ -229,26 +375,43 @@ export default {
   },
   data() {
     return {
+      pugai: require("@/assets/img/pugai.jpg"),
       // 关于新增游戏信息的进度条
       active: 0,
+      // 关于是否是跟新操作
+      isUpdate: false,
+      updateGameId: "",
       // 数据列表加载动画
       listLoading: true,
       // 查询列表参数对象
       listQuery: {
-        id: undefined,
-        phone: undefined,
-        married: undefined,
-        currentPage: 1,
+        pageIndex: 1,
         pageSize: 10,
       },
-      // 新增/编辑提交表单对象
+      // 新增/编辑游戏信息的表单对象
       dialogForm: {
-        name: undefined,
-        phone: undefined,
-        married: undefined,
-        avatar:'',
-        hobby: [],
+        name: "",
+        description: "",
+        detailsPicture: "",
+        roughPicture: "",
+        supportPlatform: "",
+        categoryId: "",
+        companyId: "",
       },
+      // 新增/编辑游戏建议的表单对象
+      dialogForm2: {
+        operationSystem: "",
+        cupName: "",
+        graphicsCard: "",
+        diskSize: "",
+        memorySize: "",
+        gameId: "",
+      },
+      // 所有游戏类型
+      AllgameType: [],
+      // 所有公司
+      AllCompany: [],
+
       // 数据总条数
       total: 0,
       // 表格数据数组
@@ -258,29 +421,52 @@ export default {
       // 新增/编辑 弹出框显示/隐藏
       formVisible: false,
       // 表单校验 trigger: ['blur', 'change'] 为多个事件触发
-      formRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
-          {
-            pattern: /^1[3456789]\d{9}$/,
-            message: "请输入正确的手机号",
-            trigger: "blur",
-          },
+      formRules1: {
+        name: [{ required: true, message: "该选项必填", trigger: "blur" }],
+        description: [
+          { required: true, message: "该选项必填", trigger: "blur" },
+          { min: 50, message: "必须多于50字", trigger: "blur" },
+        ],
+        detailsPicture: [
+          { required: true, message: "该选项必填", trigger: "change" },
+        ],
+        roughPicture: [
+          { required: true, message: "该选项必填", trigger: "change" },
+        ],
+        supportPlatform: [
+          { required: true, message: "该选项必填", trigger: "blur" },
+        ],
+        categoryId: [
+          { required: true, message: "该选项必填", trigger: "change" },
+        ],
+        companyId: [
+          { required: true, message: "该选项必填", trigger: "change" },
+        ],
+      },
+      formRules2: {
+        operationSystem: [
+          { required: true, message: "该选项必填", trigger: "blur" },
+        ],
+        cupName: [{ required: true, message: "该选项必填", trigger: "blur" }],
+        memorySize: [
+          { required: true, message: "该选项必填", trigger: "blur" },
+        ],
+        diskSize: [{ required: true, message: "该选项必填", trigger: "blur" }],
+        graphicsCard: [
+          { required: true, message: "该选项必填", trigger: "blur" },
         ],
       },
       // 防止多次连续提交表单
       isSubmit: false,
-      // 导出文件格式
-      filesFormat: ".txt, .csv, .xls, .xlsx",
-      // 导出数据 弹出框显示/隐藏
-      exportVisible: false,
     };
   },
   created() {
     this.fetchData();
+    this.getAllType();
+    this.getAllCompany();
   },
   methods: {
+    // 上传图片相关（以下四个）
     beforeAvatarUpload(file) {
       const isJPGPNG = file.type === "image/jpeg" || file.type === "image/png";
       const isLt3M = file.size / 1024 / 1024 < 3;
@@ -293,8 +479,11 @@ export default {
       }
       return isJPGPNG && isLt3M;
     },
-    handleAvatarSuccess(res, file) {
-      this.dialogForm.avatar = res;
+    detailsPictureSuccess(res, file) {
+      this.dialogForm.detailsPicture = res;
+    },
+    roughPictureSuccess(res, name) {
+      this.dialogForm.roughPicture = res;
     },
     handleAvatarFail(err) {
       this.$message.error("系统错误，上传文件失败");
@@ -307,18 +496,53 @@ export default {
     handleCreate() {
       this.formVisible = true;
       this.dialogForm.name = undefined;
-      this.dialogForm.phone = undefined;
-      this.dialogForm.married = undefined;
-      this.dialogForm.hobby = [];
     },
     // 编辑数据
-    handleEdit(index, row) {
-      console.log(index, row);
-      this.formVisible = true;
-      this.dialogForm.name = row.name;
-      this.dialogForm.phone = row.phone;
-      this.dialogForm.married = row.married;
-      this.dialogForm.hobby = row.hobby.split("、");
+    handleEdit(id) {
+      this.updateGameId = id;
+
+      // 获取游戏信息
+      this.$http.get(
+        `/v1/g/info/${id}`,
+        null,
+        (res) => {
+          console.log(res, "1111");
+          let categoryId = this.AllgameType.filter(
+            (item) => item.categoryName == res.categoryName
+          );
+          let companyId = this.AllCompany.filter(
+            (item) => item.companyName == res.companyName
+          );
+          console.log(categoryId, "categoryId");
+          console.log(companyId, "companyId");
+          this.dialogForm = {
+            ...res,
+            ...{ categoryId: categoryId[0].id },
+            ...{ companyId: companyId[0].id },
+          };
+          console.log(this.dialogForm, "aaaaaa");
+
+          this.$http.get(
+            `/v1/g/suggestion?gameId=${id}`,
+            null,
+            (res) => {
+              // this.$nextTick(() => {
+              //   this.dialogForm2 = res;
+              // });
+              this.dialogForm2 = res;
+              console.log(this.dialogForm2, "2222");
+              this.isUpdate = true;
+              this.formVisible = true;
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     },
     // 删除数据
     handleDelete(id) {
@@ -347,67 +571,162 @@ export default {
           });
         });
     },
-    // 批量删除
-    batchDelete() {
-      if (this.multipleSelection.length < 1) {
-        this.$message({
-          message: "请先选择要删除的数据！",
-          type: "warning",
-        });
-      } else {
-        this.handleDelete();
-      }
-    },
-    // 新增/编辑弹出框 关闭时操作
-    handleClose() {
-      this.formVisible = false;
-      this.$refs.dialogForm.resetFields();
-    },
+
     // 获取数据列表
     fetchData() {
       this.listLoading = true;
       // 获取数据列表接口
       this.$http.get(
-        `/v1/g/admin/infos?pageIndex=${this.listQuery.currentPage}`,
-        null,
+        `/v1/g/admin/infos?`,
+        this.listQuery,
         (res) => {
-          console.log(res, "!!!!!!!!!!!!!!!!!");
           this.tableData = res.data;
           this.tableData.map((item) => {
-            item.sellTime = dayjs(item.sellTime).format("YYYY-MM-DD HH:mm:ss");
+            item.sellTime = dayjs(item.sellTime).format("YYYY-MM-DD");
             return item;
           });
           this.total = res.totalCount;
           this.listLoading = false;
         },
         (err) => {
+          this.tableData = [];
+          this.listLoading = false;
           console.log(err);
         }
       );
     },
+
+    // 获取所有类型
+    getAllType() {
+      // 获取数据列表接口
+      this.$http.get(
+        `/v1/g/categories/all`,
+        null,
+        (res) => {
+          this.AllgameType = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    // 获取所有公司
+    getAllCompany() {
+      // 获取数据列表接口
+      this.$http.get(
+        `/v1/g/companies/all`,
+        null,
+        (res) => {
+          this.AllCompany = res;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+
     // 查询数据
     onSubmit() {
       this.listQuery.currentPage = 1;
       this.fetchData();
     },
-    // 新增/编辑表单确认提交
-    submitForm(formName) {
+
+    // 游戏信息表单上传
+    submitInformation(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 此处添加 新增/编辑数据的接口 新增成功后调用fetchData方法更新列表
-          // 先 this.isSubmit = true 接口返回成功后 再 this.isSubmit = false
-          this.formVisible = false;
-        } else {
-          this.isSubmit = false;
-          return false;
+          let sellTime = dayjs(new Date()).format("YYYY-MM-DD");
+          let from = { ...this.dialogForm, ...{ sellTime } };
+          if (this.isUpdate) {
+            from = { ...from, ...{ id: this.updateGameId } };
+            this.$http.put(
+              `/v1/g/info`,
+              from,
+              (res) => {
+                if (this.active++ > 1) this.active = 2;
+                console.log(res);
+                this.$refs[formName].resetFields();
+                if (res) {
+                  this.$set(this.dialogForm2, gameId, res);
+                }
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+          } else {
+            this.$http.post(
+              `/v1/g/info`,
+              from,
+              (res) => {
+                if (this.active++ > 1) this.active = 2;
+                console.log(res);
+                this.$refs[formName].resetFields();
+                this.$set(this.dialogForm2, gameId, res);
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+          }
         }
       });
     },
-    // 新增/编辑表单取消提交
-    cancleForm() {
-      this.$refs.dialogForm.resetFields();
+    // 游戏信息表单取消上传
+    cancleInformation(formName) {
+      this.active = 0;
+      this.dialogForm = {};
+      this.dialogForm2 = {};
+      this.$refs[formName].resetFields();
       this.formVisible = false;
     },
+
+    // 游戏建议表单上传
+    submitSuggest(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.isUpdate) {
+            let data = { ...this.dialogForm2, ...{ id: this.updateGameId } };
+            this.$http.put(
+              `/v1/g/suggestion`,
+              data,
+              (res) => {
+                this.active = 0;
+                this.$refs[formName].resetFields();
+                console.log(res);
+                this.formVisible = false;
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+          } else {
+            this.$http.post(
+              `/v1/g/suggestion`,
+              this.dialogForm2,
+              (res) => {
+                this.active = 0;
+                this.$refs[formName].resetFields();
+                console.log(res);
+                this.formVisible = false;
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+          }
+        }
+      });
+    },
+    // 游戏建议表单取消上传
+    cancleSuggest(formName) {
+      this.active = 0;
+      this.dialogForm = {};
+      this.dialogForm2 = {};
+      this.$refs[formName].resetFields();
+      this.formVisible = false;
+    },
+
     // 列表中婚姻状况栏，状态值改变时，调用
     selectChange(row) {
       // 此处添加后台接口，成功后调用fetchData方法更新列表
@@ -423,7 +742,7 @@ export default {
 <style lang="less">
 .game-management {
   .el-card {
-    min-height: 80vh;
+    min-height: 85vh;
   }
   .control-btns {
     margin-bottom: 20px;
