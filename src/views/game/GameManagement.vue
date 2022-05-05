@@ -617,7 +617,6 @@ export default {
         `/v1/g/companies/all`,
         null,
         (res) => {
-          console.log(res, "SSSSsss");
           this.AllCompany = res;
         },
         (err) => {
