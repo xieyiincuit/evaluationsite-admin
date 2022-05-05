@@ -3,7 +3,7 @@
     <el-card shadow="always">
       <!-- 操作栏 -->
       <div class="control-btns">
-        <el-button type="primary" @click="handleCreate">新建数据</el-button>
+        <el-button type="primary" @click="handleCreate">上架游戏商品</el-button>
       </div>
 
       <!-- 表格栏 -->
@@ -16,7 +16,6 @@
         size="medium"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="60" />
         <el-table-column
           prop="id"
           label="商品编号"
@@ -26,23 +25,31 @@
         />
         <el-table-column
           prop="gameName"
-          label="游戏名"
+          label="商品名"
           align="center"
           width="150"
         />
-        <el-table-column prop="price" label="价格" align="center" width="170" />
-        <el-table-column
-          prop="discount"
-          label="折扣"
-          align="center"
-          width="150"
-        />
-        <el-table-column
-          prop="discount"
-          label="状态"
-          align="center"
-          width="150"
-        >
+        <el-table-column label="商品图片" width="300" align="center">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" title="" trigger="hover">
+              <img :src="ossUrl + scope.row.picture" alt="" />
+              <img
+                slot="reference"
+                :src="ossUrl + scope.row.picture"
+                style="width: 50%"
+              />
+            </el-popover>
+            <span>{{ scope.row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="价格" align="center" width="170">
+          <template slot-scope="scope">{{ scope.row.price }}￥ </template>
+        </el-table-column>
+
+        <el-table-column label="折扣" align="center" width="150">
+          <template slot-scope="scope">{{ scope.row.discount }}% </template>
+        </el-table-column>
+        <el-table-column label="状态" align="center" width="150">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.temporaryStopSell == true" type="danger"
               >不在售</el-tag
@@ -53,7 +60,7 @@
 
         <el-table-column
           prop="availableStock"
-          label="库存"
+          label="剩余SDK"
           align="center"
           width="170"
         >
@@ -72,35 +79,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="游戏图片" width="300" align="center">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" title="" trigger="hover">
-              <img
-                :src="
-                  'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                  scope.row.picture
-                "
-                alt=""
-              />
-              <img
-                slot="reference"
-                :src="
-                  'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                  scope.row.picture
-                "
-                style="width: 50%"
-              />
-            </el-popover>
-            <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
               size="mini"
               :disabled="scope.row.forbid"
-              @click="handleEdit(scope.row.id)"
+              @click="handleEdit(scope.row)"
               >编辑</el-button
             >
             <el-button
@@ -137,7 +121,7 @@
     </el-card>
 
     <el-dialog
-      title="新增"
+      title="游戏上架"
       :visible.sync="formVisible"
       width="30%"
       class="dialog-form"
@@ -181,7 +165,7 @@
         <el-form-item label="商品图：" prop="sellPictrue">
           <el-upload
             class="avatar-uploader"
-            action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/s/pic"
+            action="http://localhost:20000/v1/s/pic"
             :headers="filereqHeader"
             :show-file-list="false"
             :on-success="addPictureSuccess"
@@ -200,14 +184,20 @@
             /> -->
             <img
               v-if="appendForm.sellPictrue"
-              :src="
-                'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                appendForm.sellPictrue
-              "
+              :src="ossUrl + appendForm.sellPictrue"
               class="avatar"
             />
             <div
-              class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
+              class="
+                rounded-2
+                color-fg-default
+                px-2
+                py-1
+                left-0
+                bottom-0
+                ml-2
+                mb-2
+              "
             >
               <svg
                 aria-hidden="true"
@@ -261,7 +251,7 @@
         <el-form-item label="商品图：" prop="sellPictrue">
           <el-upload
             class="avatar-uploader"
-            action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/s/pic"
+            action="http://localhost:20000/v1/s/pic"
             :headers="filereqHeader"
             :show-file-list="false"
             :on-success="roughPictureSuccess"
@@ -280,14 +270,20 @@
             /> -->
             <img
               v-if="dialogForm.sellPictrue"
-              :src="
-                'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                dialogForm.sellPictrue
-              "
+              :src="ossUrl + dialogForm.sellPictrue"
               class="avatar"
             />
             <div
-              class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
+              class="
+                rounded-2
+                color-fg-default
+                px-2
+                py-1
+                left-0
+                bottom-0
+                ml-2
+                mb-2
+              "
             >
               <svg
                 aria-hidden="true"
@@ -346,6 +342,7 @@ export default {
   },
   data() {
     return {
+      ossUrl: process.env.VUE_APP_OSS,
       newAvailableStock: "",
       isSelected: {},
       dialogVisible: false,
@@ -440,18 +437,20 @@ export default {
           availableStock: this.newAvailableStock,
         };
         // 。。。此处代码省略（调用修改名称接口）
-        this.$http.put(`/v1/g/shop/stock`, form, (res) => {
+        this.$http.put(
+          `/v1/g/shop/stock`,
+          form,
           (res) => {
             this.$message({
               type: "success",
               message: "修改成功!",
             });
+            this.fetchData();
           },
-            (err) => {
-              console.log(err);
-            };
-          this.fetchData();
-        });
+          (err) => {
+            console.log(err);
+          }
+        );
       }
     },
 
@@ -480,9 +479,6 @@ export default {
       }
       return isJPGPNG && isLt3M;
     },
-    detailsPictureSuccess(res, file) {
-      this.dialogForm.detailsPicture = res;
-    },
     roughPictureSuccess(res, name) {
       this.dialogForm.sellPictrue = res;
     },
@@ -499,12 +495,14 @@ export default {
     // 新建数据
     handleCreate() {
       this.formVisible = true;
-      this.dialogForm.name = undefined;
     },
     // 编辑数据
-    handleEdit(id) {
+    handleEdit(row) {
       this.dialogVisible = true;
-      this.$set(this.dialogForm, "id", id);
+      this.dialogForm.id = row.id;
+      this.dialogForm.sellPictrue = row.picture;
+      this.dialogForm.price = row.price;
+      this.dialogForm.discount = row.discount;
     },
     // 删除数据
     handleDelete(id) {
@@ -518,18 +516,23 @@ export default {
           // 此处可添加--删除接口
           // 删除成功调用fetchData方法更新列表
 
-          this.$http.delete(`/v1/g/shop/${id}`, null, (res) => {
+          this.$http.delete(
+            `/v1/g/shop/${id}`,
+            null,
             (res) => {
               this.$message({
                 type: "success",
                 message: "删除成功!",
               });
+              this.fetchData();
             },
-              (err) => {
-                console.log(err);
-              };
-            this.fetchData();
-          });
+            (err) => {
+              this.$message({
+                type: "error",
+                message: err.response.data,
+              });
+            }
+          );
         })
         .catch(() => {
           this.$message({
@@ -549,19 +552,20 @@ export default {
         .then(() => {
           // 此处可添加--删除接口
           // 删除成功调用fetchData方法更新列表
-
-          this.$http.put(`/v1/g/shop/status/${id}`, null, (res) => {
+          this.$http.put(
+            `/v1/g/shop/status/${id}`,
+            null,
             (res) => {
               this.$message({
                 type: "success",
                 message: operation + "成功!",
               });
+              this.fetchData();
             },
-              (err) => {
-                console.log(err);
-              };
-            this.fetchData();
-          });
+            (err) => {
+              console.log(err);
+            }
+          );
         })
         .catch(() => {
           this.$message({
@@ -645,13 +649,17 @@ export default {
             `/v1/g/shop`,
             this.dialogForm,
             (res) => {
-              console.log(res, "rrrrrrrr");
-              this.dialogForm = [];
+              this.$message({
+                type: "success",
+                message: "更新成功!",
+              });
+              this.dialogForm = {};
               this.dialogVisible = false;
+              this.fetchData();
             },
             (err) => {
               console.log(err);
-              this.dialogForm = [];
+              this.dialogForm = {};
               this.dialogVisible = false;
             }
           );
@@ -672,14 +680,17 @@ export default {
             `/v1/g/shop`,
             this.appendForm,
             (res) => {
-              // console.log(res, "rrrrrrrr");
-              this.appendForm = [];
+              this.$message({
+                type: "success",
+                message: "上架成功!",
+              });
+              this.appendForm = {};
               this.formVisible = false;
               this.fetchData();
             },
             (err) => {
               console.log(err);
-              this.appendForm = [];
+              this.appendForm = {};
               this.formVisible = false;
             }
           );
@@ -695,7 +706,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .upgame-shops {
   .el-card {
     min-height: 85vh;

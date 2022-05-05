@@ -3,7 +3,7 @@
     <el-card shadow="always">
       <!-- 操作栏 -->
       <div class="control-btns">
-        <el-button type="primary" @click="handleCreate">新建数据</el-button>
+        <el-button type="primary" @click="handleCreate">录入游戏信息</el-button>
       </div>
       <!-- 查询栏 -->
       <el-form
@@ -51,7 +51,6 @@
             <el-option value="hot" label="游戏热度" />
             <el-option value="time" label="发售时间" />
             <el-option value="score" label="游戏评分" />
-            <el-option value="Id" label="Id" />
           </el-select>
         </el-form-item>
 
@@ -69,7 +68,6 @@
         size="medium"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="60" />
         <el-table-column
           prop="id"
           label="游戏编号"
@@ -143,6 +141,7 @@
         :visible.sync="formVisible"
         width="30%"
         class="dialog-form"
+        @close="closeDialog"
       >
         <el-steps :active="active" finish-status="success" align-center>
           <el-step title="游戏信息"></el-step>
@@ -161,13 +160,17 @@
             <el-input v-model="dialogForm.name" />
           </el-form-item>
           <el-form-item label="基本描述：" prop="description">
-            <el-input type="textarea" v-model="dialogForm.description" />
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+              v-model="dialogForm.description"
+            />
           </el-form-item>
 
           <el-form-item label="略缩图：" prop="roughPicture">
             <el-upload
               class="avatar-uploader"
-              action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/g/pic"
+              action="http://localhost:20000/v1/g/pic"
               :headers="filereqHeader"
               :show-file-list="false"
               :on-success="roughPictureSuccess"
@@ -178,8 +181,7 @@
               <img
                 :src="
                   dialogForm.roughPicture
-                    ? 'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                      dialogForm.roughPicture
+                    ? ossUrl + dialogForm.roughPicture
                     : pugai
                 "
                 class="avatar"
@@ -193,7 +195,16 @@
                 class="avatar"
               /> -->
               <div
-                class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
+                class="
+                  rounded-2
+                  color-fg-default
+                  px-2
+                  py-1
+                  left-0
+                  bottom-0
+                  ml-2
+                  mb-2
+                "
               >
                 <svg
                   aria-hidden="true"
@@ -217,7 +228,7 @@
           <el-form-item label="详细图：" prop="detailsPicture">
             <el-upload
               class="avatar-uploader"
-              action="http://zhousl.australiaeast.cloudapp.azure.com:20000/v1/g/pic"
+              action="http://localhost:20000/v1/g/pic"
               :headers="filereqHeader"
               :show-file-list="false"
               :on-success="detailsPictureSuccess"
@@ -228,22 +239,22 @@
               <img
                 :src="
                   dialogForm.detailsPicture
-                    ? 'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                      dialogForm.detailsPicture
+                    ? ossUrl + dialogForm.detailsPicture
                     : pugai
                 "
                 class="avatar"
               />
-              <!-- <img
-              v-if="dialogForm.detailsPicture"
-                :src="
-                  'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
-                  dialogForm.detailsPicture
-                "
-                class="avatar"
-              /> -->
               <div
-                class="rounded-2 color-fg-default px-2 py-1 left-0 bottom-0 ml-2 mb-2"
+                class="
+                  rounded-2
+                  color-fg-default
+                  px-2
+                  py-1
+                  left-0
+                  bottom-0
+                  ml-2
+                  mb-2
+                "
               >
                 <svg
                   aria-hidden="true"
@@ -375,11 +386,13 @@ export default {
   },
   data() {
     return {
+      ossUrl: process.env.VUE_APP_OSS,
       pugai: require("@/assets/img/pugai.jpg"),
       // 关于新增游戏信息的进度条
       active: 0,
-      // 关于是否是跟新操作
+      // 关于是否是更新操作
       isUpdate: false,
+      isSugUpdate: false,
       updateGameId: "",
       // 数据列表加载动画
       listLoading: true,
@@ -401,7 +414,7 @@ export default {
       // 新增/编辑游戏建议的表单对象
       dialogForm2: {
         operationSystem: "",
-        cupName: "",
+        cpuName: "",
         graphicsCard: "",
         diskSize: "",
         memorySize: "",
@@ -447,7 +460,7 @@ export default {
         operationSystem: [
           { required: true, message: "该选项必填", trigger: "blur" },
         ],
-        cupName: [{ required: true, message: "该选项必填", trigger: "blur" }],
+        cpuName: [{ required: true, message: "该选项必填", trigger: "blur" }],
         memorySize: [
           { required: true, message: "该选项必填", trigger: "blur" },
         ],
@@ -506,7 +519,6 @@ export default {
         `/v1/g/info/${id}`,
         null,
         (res) => {
-          console.log(res, "1111");
           let categoryId = this.AllgameType.filter(
             (item) => item.categoryName == res.categoryName
           );
@@ -521,17 +533,15 @@ export default {
             ...{ companyId: companyId[0].id },
           };
           console.log(this.dialogForm, "aaaaaa");
-
+          this.isUpdate = true;
           this.$http.get(
             `/v1/g/suggestion?gameId=${id}`,
             null,
             (res) => {
-              // this.$nextTick(() => {
-              //   this.dialogForm2 = res;
-              // });
               this.dialogForm2 = res;
-              console.log(this.dialogForm2, "2222");
-              this.isUpdate = true;
+              if (res.id) {
+                this.isSugUpdate = true;
+              }
               this.formVisible = true;
             },
             (err) => {
@@ -555,14 +565,23 @@ export default {
         .then(() => {
           // 此处可添加--删除接口
           // 删除成功调用fetchData方法更新列表
-
-          this.$http.delete(`/v1/g/info/${id}`, null, (res) => {
-            this.$message({
-              type: "success",
-              message: "删除成功!",
-            });
-            this.getTableList();
-          });
+          this.$http.delete(
+            `/v1/g/info/${id}`,
+            null,
+            (res) => {
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.fetchData();
+            },
+            (err) => {
+              this.$message({
+                type: "error",
+                message: err.response.data,
+              });
+            }
+          );
         })
         .catch(() => {
           this.$message({
@@ -649,9 +668,17 @@ export default {
                 if (res) {
                   this.$set(this.dialogForm2, gameId, res);
                 }
+                this.$message({
+                  type: "success",
+                  message: "游戏信息修改成功!",
+                });
+                this.fetchData();
               },
               (err) => {
-                console.log(err);
+                this.$message({
+                  type: "error",
+                  message: "游戏信息修改失败!",
+                });
               }
             );
           } else {
@@ -663,9 +690,17 @@ export default {
                 console.log(res);
                 this.$refs[formName].resetFields();
                 this.$set(this.dialogForm2, gameId, res);
+                this.$message({
+                  type: "success",
+                  message: "游戏信息录入成功!",
+                });
+                this.fetchData();
               },
               (err) => {
-                console.log(err);
+                this.$message({
+                  type: "error",
+                  message: err.response.data,
+                });
               }
             );
           }
@@ -685,8 +720,8 @@ export default {
     submitSuggest(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.isUpdate) {
-            let data = { ...this.dialogForm2, ...{ id: this.updateGameId } };
+          if (this.isSugUpdate == true) {
+            let data = { ...this.dialogForm2 };
             this.$http.put(
               `/v1/g/suggestion`,
               data,
@@ -695,6 +730,10 @@ export default {
                 this.$refs[formName].resetFields();
                 console.log(res);
                 this.formVisible = false;
+                this.$message({
+                  type: "success",
+                  message: "游戏建议修改成功!",
+                });
               },
               (err) => {
                 console.log(err);
@@ -726,14 +765,11 @@ export default {
       this.$refs[formName].resetFields();
       this.formVisible = false;
     },
-
-    // 列表中婚姻状况栏，状态值改变时，调用
-    selectChange(row) {
-      // 此处添加后台接口，成功后调用fetchData方法更新列表
-    },
-    // 列表中禁止编辑栏，状态值改变时，调用
-    stateChange(row) {
-      // 此处添加后台接口，成功后调用fetchData方法更新列表
+    closeDialog() {
+      this.active = 0;
+      this.dialogForm = {};
+      this.dialogForm2 = {};
+      this.formVisible = false;
     },
   },
 };
@@ -799,6 +835,7 @@ export default {
   }
 
   img {
+    max-height: 200px;
     width: 250px;
   }
 }
