@@ -80,7 +80,6 @@
                   'http://zhousl.australiaeast.cloudapp.azure.com:9000/' +
                   scope.row.picture
                 "
-                alt=""
               />
               <img
                 slot="reference"
@@ -91,7 +90,6 @@
                 style="width: 50%"
               />
             </el-popover>
-            <span>{{ scope.row.title }}</span>
           </template>
         </el-table-column>
 
@@ -100,7 +98,7 @@
             <el-button
               size="mini"
               :disabled="scope.row.forbid"
-              @click="handleEdit(scope.row.id)"
+              @click="handleEdit(scope.row)"
               >编辑</el-button
             >
             <el-button
@@ -440,18 +438,20 @@ export default {
           availableStock: this.newAvailableStock,
         };
         // 。。。此处代码省略（调用修改名称接口）
-        this.$http.put(`/v1/g/shop/stock`, form, (res) => {
+        this.$http.put(
+          `/v1/g/shop/stock`,
+          form,
           (res) => {
+            this.fetchData();
             this.$message({
               type: "success",
               message: "修改成功!",
             });
           },
-            (err) => {
-              console.log(err);
-            };
-          this.fetchData();
-        });
+          (err) => {
+            console.log(err);
+          }
+        );
       }
     },
 
@@ -502,9 +502,13 @@ export default {
       this.dialogForm.name = undefined;
     },
     // 编辑数据
-    handleEdit(id) {
+    handleEdit(row) {
+      console.log(row);
       this.dialogVisible = true;
-      this.$set(this.dialogForm, "id", id);
+      this.$set(this.dialogForm, "id", row.id);
+      this.$set(this.dialogForm, "price", row.price);
+      this.$set(this.dialogForm, "discount", row.discount);
+      this.$set(this.dialogForm, "sellPictrue", row.picture);
     },
     // 删除数据
     handleDelete(id) {
@@ -646,12 +650,13 @@ export default {
             this.dialogForm,
             (res) => {
               console.log(res, "rrrrrrrr");
-              this.dialogForm = [];
+              this.dialogForm = {};
               this.dialogVisible = false;
+              this.fetchData();
             },
             (err) => {
               console.log(err);
-              this.dialogForm = [];
+              this.dialogForm = {};
               this.dialogVisible = false;
             }
           );
@@ -673,13 +678,13 @@ export default {
             this.appendForm,
             (res) => {
               // console.log(res, "rrrrrrrr");
-              this.appendForm = [];
+              this.appendForm = {};
               this.formVisible = false;
               this.fetchData();
             },
             (err) => {
               console.log(err);
-              this.appendForm = [];
+              this.appendForm = {};
               this.formVisible = false;
             }
           );
